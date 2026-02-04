@@ -1,6 +1,7 @@
 {
-  "name": "my-v0-project",
+  "name": "prep-insight",
   "version": "0.1.0",
+  "description": "AI-powered interview preparation platform with experience sharing and mock interviews.",
   "private": true,
   "scripts": {
     "dev": "next dev",

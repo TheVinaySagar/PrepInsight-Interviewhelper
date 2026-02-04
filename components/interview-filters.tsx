@@ -10,7 +10,8 @@ import {
   Briefcase,
   User,
   Tag,
-  Filter
+  Filter,
+  SlidersHorizontal
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -277,44 +278,34 @@ export function InterviewFilters() {
   }
 
   return (
-    <div className="space-y-6 min-h-[300px]">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-medium">Filters</h3>
-          {activeFilters > 0 && (
-            <Badge variant="secondary" className="px-2 py-0.5">
-              {activeFilters}
-            </Badge>
-          )}
+          <SlidersHorizontal className="h-5 w-5 text-primary" />
+          <h3 className="font-semibold text-lg">Filters</h3>
         </div>
         {activeFilters > 0 && (
           <Button
             variant="ghost"
             size="sm"
             onClick={resetFilters}
-            className="text-muted-foreground hover:text-primary"
+            className="text-xs text-muted-foreground hover:text-primary h-auto py-1 px-2"
           >
             Clear all
           </Button>
         )}
       </div>
 
-      <Separator />
-
       {/* Active filters */}
       {activeFilters > 0 && (
         <div className="flex flex-wrap gap-2">
           {company && (
-            <Badge
-              variant="outline"
-              className="flex items-center gap-1"
-            >
-              <span className="font-medium">Company:</span>
+            <Badge variant="secondary" className="flex items-center gap-1 rounded-lg px-2 py-1">
+              <span className="font-medium text-muted-foreground mr-1">Company:</span>
               {companies.find(c => c.value === company)?.label}
               <button
                 onClick={() => removeFilter("company")}
-                className="ml-1 rounded-full p-0.5 hover:bg-accent"
+                className="ml-1 rounded-full p-0.5 hover:bg-background/80 transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -322,15 +313,12 @@ export function InterviewFilters() {
           )}
 
           {role && (
-            <Badge
-              variant="outline"
-              className="flex items-center gap-1"
-            >
-              <span className="font-medium">Role:</span>
+            <Badge variant="secondary" className="flex items-center gap-1 rounded-lg px-2 py-1">
+              <span className="font-medium text-muted-foreground mr-1">Role:</span>
               {roles.find(r => r.value === role)?.label}
               <button
                 onClick={() => removeFilter("role")}
-                className="ml-1 rounded-full p-0.5 hover:bg-accent"
+                className="ml-1 rounded-full p-0.5 hover:bg-background/80 transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -338,15 +326,12 @@ export function InterviewFilters() {
           )}
 
           {level && (
-            <Badge
-              variant="outline"
-              className="flex items-center gap-1"
-            >
-              <span className="font-medium">Level:</span>
+            <Badge variant="secondary" className="flex items-center gap-1 rounded-lg px-2 py-1">
+              <span className="font-medium text-muted-foreground mr-1">Level:</span>
               {levels.find(l => l.value === level)?.label}
               <button
                 onClick={() => removeFilter("level")}
-                className="ml-1 rounded-full p-0.5 hover:bg-accent"
+                className="ml-1 rounded-full p-0.5 hover:bg-background/80 transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -356,14 +341,14 @@ export function InterviewFilters() {
           {selectedTags.map(tag => (
             <Badge
               key={tag}
-              variant="outline"
-              className="flex items-center gap-1"
+              variant="secondary"
+              className="flex items-center gap-1 rounded-lg px-2 py-1"
             >
-              <span className="font-medium">Tag:</span>
+              <span className="font-medium text-muted-foreground mr-1">Tag:</span>
               {tags.find(t => t.value === tag)?.label}
               <button
                 onClick={() => removeFilter("tag", tag)}
-                className="ml-1 rounded-full p-0.5 hover:bg-accent"
+                className="ml-1 rounded-full p-0.5 hover:bg-background/80 transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -372,182 +357,186 @@ export function InterviewFilters() {
         </div>
       )}
 
-      {/* Company Filter */}
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium flex items-center gap-2">
-          <Building2 className="h-4 w-4 text-muted-foreground" />
-          Company
-        </h4>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              className="w-full justify-between"
-            >
-              {company
-                ? companies.find(c => c.value === company)?.label
-                : "Select company..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-0">
-            <Command>
-              <CommandInput placeholder="Search companies..." />
-              <CommandList>
-                <CommandEmpty>No company found.</CommandEmpty>
-                <CommandGroup>
-                  <ScrollArea className="h-[200px]">
-                    {companies.map(c => (
-                      <CommandItem
-                        key={c.value}
-                        value={c.value}
-                        onSelect={() => {
-                          setCompany(c.value === company ? "" : c.value)
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            company === c.value ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        {c.label}
-                      </CommandItem>
-                    ))}
-                  </ScrollArea>
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {/* Role Filter */}
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium flex items-center gap-2">
-          <Briefcase className="h-4 w-4 text-muted-foreground" />
-          Role
-        </h4>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              className="w-full justify-between"
-            >
-              {role
-                ? roles.find(r => r.value === role)?.label
-                : "Select role..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-0">
-            <Command>
-              <CommandInput placeholder="Search roles..." />
-              <CommandList>
-                <CommandEmpty>No role found.</CommandEmpty>
-                <CommandGroup>
-                  <ScrollArea className="h-[200px]">
-                    {roles.map(r => (
-                      <CommandItem
-                        key={r.value}
-                        value={r.value}
-                        onSelect={() => {
-                          setRole(r.value === role ? "" : r.value)
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            role === r.value ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        {r.label}
-                      </CommandItem>
-                    ))}
-                  </ScrollArea>
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {/* Experience Level Filter */}
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium flex items-center gap-2">
-          <User className="h-4 w-4 text-muted-foreground" />
-          Experience Level
-        </h4>
-        <RadioGroup
-          value={level}
-          onValueChange={setLevel}
-          className="grid grid-cols-2 gap-2"
-        >
-          {levels.map(l => (
-            <div key={l.value} className="flex items-center space-x-2">
-              <RadioGroupItem
-                value={l.value}
-                id={l.value}
-                className="peer sr-only"
-              />
-              <Label
-                htmlFor={l.value}
-                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+      <div className="space-y-6">
+        {/* Company Filter */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+            <Building2 className="h-4 w-4" />
+            Company
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-full justify-between bg-card hover:bg-accent/50 transition-colors border-muted/60"
               >
-                {l.label}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
+                {company
+                  ? companies.find(c => c.value === company)?.label
+                  : <span className="text-muted-foreground font-normal">Select company...</span>}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[280px] p-0 shadow-lg border-muted/60">
+              <Command>
+                <CommandInput placeholder="Search companies..." />
+                <CommandList>
+                  <CommandEmpty>No company found.</CommandEmpty>
+                  <CommandGroup>
+                    <ScrollArea className="h-[200px]">
+                      {companies.map(c => (
+                        <CommandItem
+                          key={c.value}
+                          value={c.value}
+                          onSelect={() => {
+                            setCompany(c.value === company ? "" : c.value)
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              company === c.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {c.label}
+                        </CommandItem>
+                      ))}
+                    </ScrollArea>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
 
-      {/* Tags Filter */}
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium flex items-center gap-2">
-          <Tag className="h-4 w-4 text-muted-foreground" />
-          Tags
-        </h4>
-        <Accordion type="single" collapsible>
-          <AccordionItem value="tags" className="border-none">
-            <AccordionTrigger className="py-2 hover:no-underline">
-              <div className="flex items-center gap-2 text-sm">
-                {selectedTags.length > 0 ? (
-                  <span>{selectedTags.length} selected</span>
-                ) : (
-                  <span>Select tags</span>
-                )}
+        {/* Role Filter */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+            <Briefcase className="h-4 w-4" />
+            Target Role
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-full justify-between bg-card hover:bg-accent/50 transition-colors border-muted/60"
+              >
+                {role
+                  ? roles.find(r => r.value === role)?.label
+                  : <span className="text-muted-foreground font-normal">Select role...</span>}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[280px] p-0 shadow-lg border-muted/60">
+              <Command>
+                <CommandInput placeholder="Search roles..." />
+                <CommandList>
+                  <CommandEmpty>No role found.</CommandEmpty>
+                  <CommandGroup>
+                    <ScrollArea className="h-[200px]">
+                      {roles.map(r => (
+                        <CommandItem
+                          key={r.value}
+                          value={r.value}
+                          onSelect={() => {
+                            setRole(r.value === role ? "" : r.value)
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              role === r.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {r.label}
+                        </CommandItem>
+                      ))}
+                    </ScrollArea>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Experience Level Filter */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+            <User className="h-4 w-4" />
+            Experience
+          </Label>
+          <RadioGroup
+            value={level}
+            onValueChange={setLevel}
+            className="grid grid-cols-2 gap-2"
+          >
+            {levels.map(l => (
+              <div key={l.value}>
+                <RadioGroupItem
+                  value={l.value}
+                  id={l.value}
+                  className="peer sr-only"
+                />
+                <Label
+                  htmlFor={l.value}
+                  className="flex flex-col items-center justify-center text-center rounded-xl border border-muted bg-card p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all duration-200 h-full"
+                >
+                  <span className="text-xs font-medium">{l.label}</span>
+                </Label>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <ScrollArea className="h-[200px]">
-                <div className="grid grid-cols-2 gap-2">
-                  {tags.map(tag => (
-                    <div key={tag.value} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={tag.value}
-                        checked={selectedTags.includes(tag.value)}
-                        onCheckedChange={() => handleTagChange(tag.value)}
-                        className="h-4 w-4 rounded"
-                      />
-                      <Label
-                        htmlFor={tag.value}
-                        className="text-sm font-normal leading-none"
-                      >
-                        {tag.label}
-                      </Label>
-                    </div>
-                  ))}
+            ))}
+          </RadioGroup>
+        </div>
+
+        {/* Tags Filter */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+            <Tag className="h-4 w-4" />
+            Skills & Topics
+          </Label>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="tags" className="border rounded-xl px-2">
+              <AccordionTrigger className="py-3 hover:no-underline text-sm font-normal">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">
+                    {selectedTags.length > 0 ? (
+                      <span className="text-primary font-medium">{selectedTags.length} selected</span>
+                    ) : (
+                      "Select tags"
+                    )}
+                  </span>
                 </div>
-              </ScrollArea>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-4">
+                <ScrollArea className="h-[240px] pr-3">
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {tags.map(tag => (
+                      <div key={tag.value} className="flex items-center space-x-3 rounded-md p-2 hover:bg-accent/50 transition-colors">
+                        <Checkbox
+                          id={tag.value}
+                          checked={selectedTags.includes(tag.value)}
+                          onCheckedChange={() => handleTagChange(tag.value)}
+                          className="h-4 w-4 rounded data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                        />
+                        <Label
+                          htmlFor={tag.value}
+                          className="text-sm font-normal leading-none cursor-pointer flex-1"
+                        >
+                          {tag.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
 
       <Button
-        className="w-full"
+        className="w-full rounded-xl py-6 font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
         onClick={applyFilters}
         disabled={activeFilters === 0}
       >

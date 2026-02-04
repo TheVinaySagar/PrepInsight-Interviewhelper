@@ -9,6 +9,7 @@ import { Toaster } from "sonner"
 import AuthChecker from "@/components/AuthChecker"
 import { Footer } from "@/components/footer"
 import { AnimatedWrapper } from "@/components/animated-wrapper"
+import { BackgroundAnimation } from "@/components/background-animation"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <BackgroundAnimation />
             <AuthChecker />
             <div className="flex min-h-screen flex-col">
               {/* Static header that doesn't rerender */}

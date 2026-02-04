@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Calendar, Edit, MoreHorizontal, Trash } from "lucide-react"
+import { Calendar, Edit, MoreHorizontal, Trash, Eye, ThumbsUp, MessageSquare, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { toast } from "sonner"
@@ -91,27 +91,39 @@ export function UserInterviews() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">My Interviews</h2>
-        <Button asChild className="transition-transform duration-200 ease-in-out hover:scale-105">
-          <Link href="/submit">Share New Experience</Link>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">My Interviews</h2>
+          <p className="text-muted-foreground text-sm">Manage your shared experiences</p>
+        </div>
+        <Button asChild className="rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-105 active:scale-95">
+          <Link href="/submit">
+            <Plus className="mr-2 h-4 w-4" />
+            Share Experience
+          </Link>
         </Button>
       </div>
 
       {/* Loading Spinner */}
       {loading && (
         <div className="flex justify-center items-center h-40">
-          <span className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></span>
+          <div className="relative">
+            <div className="h-10 w-10 rounded-full border-4 border-primary/20 animate-spin border-t-primary" />
+          </div>
         </div>
       )}
 
       {/* Error Message */}
-      {error && <p className="text-red-500">{error}</p>}
+      {error && (
+        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+          {error}
+        </div>
+      )}
 
       {/* Interview Cards */}
       {!loading && !error && (
-        <div className="grid gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {interviews.length > 0 ? (
             interviews.map((interview: {
               _id: string;
@@ -124,99 +136,116 @@ export function UserInterviews() {
               likes?: number;
               comments?: number;
             }) => (
-              <Card key={interview._id} className="transition-all duration-300 ease-in-out hover:shadow-lg">
+              <Card key={interview._id} className="group flex flex-col h-full border-muted/40 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-all duration-300 hover:shadow-lg hover:border-primary/20">
                 <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                  <div>
-                    <CardTitle className="text-xl">{interview.company}</CardTitle>
-                    <div className="text-sm text-muted-foreground mt-1">
-                      {interview.role} • {interview.level}
+                  <div className="space-y-1">
+                    <CardTitle className="text-lg font-bold truncate pr-4">{interview.company}</CardTitle>
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                      <span className="font-medium">{interview.role}</span>
+                      <span className="text-muted-foreground/30">•</span>
+                      <span>{interview.level}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {interview.status === "draft" && (
-                      <Badge variant="outline">Draft</Badge>
-                    )}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="transition-transform duration-200 ease-in-out hover:scale-105">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(interview._id)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteRequest(interview._id)}
-                          className="text-destructive"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 text-muted-foreground hover:text-foreground">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Actions</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem onClick={() => handleEdit(interview._id)}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteRequest(interview._id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardHeader>
 
-                <CardContent>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="mr-1 h-3 w-3" />
+                <CardContent className="py-2 flex-grow">
+                  <div className="flex items-center text-xs text-muted-foreground mb-4">
+                    <Calendar className="mr-1.5 h-3.5 w-3.5" />
                     <span>Posted on {new Date(interview.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={interview.status === "published" ? "default" : interview.status === "draft" ? "secondary" : "outline"} className="capitalize">
+                      {interview.status === "draft" && "Draft"}
+                      {interview.status === "published" && "Published"}
+                      {interview.status === "pending" && "Under Review"}
+                    </Badge>
                   </div>
                 </CardContent>
 
-                <CardFooter className="flex justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    {interview.status === "published" ? (
+                <CardFooter className="flex justify-between items-center border-t bg-muted/5 py-3">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    {interview.status === "published" && (
                       <>
-                        {interview.views || 0} views • {interview.likes || 0} likes • {interview.comments || 0} comments
+                        <div className="flex items-center gap-1">
+                          <Eye className="h-3.5 w-3.5" />
+                          <span>{interview.views || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <ThumbsUp className="h-3.5 w-3.5" />
+                          <span>{interview.likes || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          <span>{interview.comments || 0}</span>
+                        </div>
                       </>
-                    ) : interview.status === "draft" ? (
-                      "On Draft"
-                    ) : (
-                      "Under Approval"
                     )}
                   </div>
-                  <Button variant="outline" size="sm" asChild className="transition-transform duration-200 ease-in-out hover:scale-105">
+                  <Button variant="ghost" size="sm" asChild className="ml-auto text-xs hover:text-primary hover:bg-primary/5">
                     <Link href={`/interviews/${interview._id}`}>
-                      {"View"}
+                      View Details
                     </Link>
                   </Button>
                 </CardFooter>
               </Card>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-10">
-              <p className="text-muted-foreground text-lg font-medium">
-                No interviews found.
-              </p>
-              <p className="text-gray-500 text-sm text-center max-w-md mt-1">
-                Start by sharing your interview experience and help others on their journey!
-              </p>
+            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center space-y-4 border-2 border-dashed rounded-3xl bg-muted/5">
+              <div className="p-4 rounded-full bg-primary/10">
+                <Plus className="h-8 w-8 text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold">No interviews shared yet</h3>
+                <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                  Start by sharing your interview experience and help others on their journey!
+                </p>
+              </div>
+              <Button asChild className="mt-4 rounded-full">
+                <Link href="/submit">Share First Experience</Link>
+              </Button>
             </div>
           )}
         </div>
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteInterviewId !== null} onOpenChange={(open) => !open && handleDeleteCancel()}>
-        <AlertDialogContent className="transition-all duration-300 ease-in-out">
+      <AlertDialog open={deleteInterviewId !== null} onOpenChange={(open: boolean) => !open && handleDeleteCancel()}>
+        <AlertDialogContent className="sm:max-w-[425px] rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this interview?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Interview Experience?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your interview experience.
+              This action cannot be undone. This will permanently delete your interview experience and remove it from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting} className="rounded-full">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "Deleting..." : "Delete Experience"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

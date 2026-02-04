@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MessageSquare, ThumbsUp, Loader2, Building, UserCircle2 } from "lucide-react";
+import { Calendar, MessageSquare, ThumbsUp, Loader2, Building2, UserCircle2, ArrowRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +40,7 @@ const containerVariants = {
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
-  hover: { scale: 1.02 },
+  hover: { y: -5, transition: { duration: 0.2 } },
 };
 
 export function Interviews() {
@@ -69,11 +69,16 @@ export function Interviews() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
-          <p className="text-sm font-medium text-muted-foreground">Loading interviews...</p>
+      <div className="flex flex-col h-64 items-center justify-center space-y-4">
+        <div className="relative">
+          <div className="h-12 w-12 rounded-full border-4 border-primary/20 animate-spin border-t-primary" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-4 w-4 rounded-full bg-primary animate-pulse" />
+          </div>
         </div>
+        <p className="text-sm font-medium text-muted-foreground animate-pulse">
+          Curating insights...
+        </p>
       </div>
     );
   }
@@ -81,13 +86,13 @@ export function Interviews() {
   if (error) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-red-500 font-medium">{error}</p>
+        <div className="text-center space-y-4 p-6 rounded-2xl border bg-card/50 backdrop-blur-sm">
+          <p className="text-destructive font-medium">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="px-4 py-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
           >
-            Try again
+            Try Refreshing
           </button>
         </div>
       </div>
@@ -96,11 +101,14 @@ export function Interviews() {
 
   if (interviews.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-lg font-medium">No interviews found</p>
-          <p className="text-sm text-muted-foreground">Try adjusting your filters or check back later</p>
+      <div className="flex flex-col h-64 items-center justify-center space-y-2 p-8 text-center border-2 border-dashed rounded-3xl bg-card/30">
+        <div className="p-4 rounded-full bg-muted/50 mb-2">
+          <MessageSquare className="h-8 w-8 text-muted-foreground" />
         </div>
+        <p className="text-xl font-semibold">No interviews found</p>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Try adjusting your filters to find what you're looking for.
+        </p>
       </div>
     );
   }
@@ -110,9 +118,9 @@ export function Interviews() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto px-4 flex-wrap items-center justify-center min-h-screen"
+      className="grid gap-6 md:grid-cols-2 xl:grid-cols-2"
     >
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {interviews.map((interview) => {
           const interviewId = interview._id ? encodeURIComponent(interview._id) : null;
 
@@ -123,35 +131,35 @@ export function Interviews() {
               initial="hidden"
               animate="visible"
               whileHover="hover"
-              className="h-full"
-              transition={{ type: "spring", stiffness: 300 }}
+              layout
             >
-              <Link href={`/interviews/${interviewId}`} className="group block h-full">
-                <Card className="flex flex-col h-full border bg-card transition-all duration-300 hover:shadow-lg hover:border-primary/30 rounded-xl shadow-sm">
-                  <CardHeader className="p-6 pb-4 space-y-3">
+              <Link href={`/interviews/${interviewId}`} className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-2xl">
+                <Card className="flex flex-col h-full border-muted/40 bg-card/50 backdrop-blur-sm hover:bg-card/80 dark:hover:bg-card/60 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 group rounded-2xl overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  <CardHeader className="p-6 pb-4 space-y-4">
                     <div className="flex justify-between items-start gap-4">
-                      <div className="space-y-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <Building className="h-4 w-4 shrink-0 text-primary" />
-                          <CardTitle className="text-xl font-bold tracking-tight leading-tight truncate">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                          <Building2 className="h-6 w-6 text-primary" />
+                        </div>
+                        <div className="space-y-1 min-w-0">
+                          <CardTitle className="text-xl font-bold tracking-tight truncate group-hover:text-primary transition-colors">
                             {interview.company}
                           </CardTitle>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <UserCircle2 className="h-4 w-4 shrink-0 text-muted-foreground" />
-                          <p className="text-sm font-medium text-muted-foreground truncate">
-                            {interview.role}
-                          </p>
+                          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                            <span className="truncate">{interview.role}</span>
+                          </div>
                         </div>
                       </div>
                       <Badge
-                        variant="outline"
+                        variant="secondary"
                         className={cn(
-                          "px-3 py-1 text-xs font-semibold rounded-full shrink-0",
-                          interview.level === "Senior" && "bg-blue-50 text-blue-700 border-blue-200",
-                          interview.level === "Mid" && "bg-green-50 text-green-700 border-green-200",
-                          interview.level === "Junior" && "bg-purple-50 text-purple-700 border-purple-200",
-                          interview.level === "Internship" && "bg-orange-50 text-orange-700 border-orange-200"
+                          "px-2.5 py-0.5 text-xs font-medium rounded-full shrink-0 border",
+                          interview.level === "Senior" && "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400",
+                          interview.level === "Mid" && "bg-green-500/10 text-green-600 border-green-500/20 dark:text-green-400",
+                          interview.level === "Junior" && "bg-purple-500/10 text-purple-600 border-purple-500/20 dark:text-purple-400",
+                          interview.level === "Internship" && "bg-orange-500/10 text-orange-600 border-orange-500/20 dark:text-orange-400"
                         )}
                       >
                         {interview.level}
@@ -159,69 +167,69 @@ export function Interviews() {
                     </div>
                   </CardHeader>
 
-                  <CardContent className="px-6 py-3 flex-grow">
-                    <div className="flex flex-wrap gap-2 mb-2">
+                  <CardContent className="px-6 py-2 flex-grow space-y-4">
+                    <div className="flex flex-wrap gap-1.5">
                       {interview.tags?.slice(0, 3).map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs px-2.5 py-1 bg-secondary/30 rounded-md">
+                        <Badge key={index} variant="outline" className="text-xs px-2 py-0.5 bg-background/50 text-muted-foreground border-muted hover:border-primary/30 transition-colors">
                           {tag}
                         </Badge>
                       ))}
                       {interview.tags && interview.tags.length > 3 && (
-                        <Badge variant="secondary" className="text-xs px-2.5 py-1 bg-secondary/30 rounded-md">
-                          +{interview.tags.length - 3} more
+                        <Badge variant="outline" className="text-xs px-2 py-0.5 bg-background/50 text-muted-foreground border-muted">
+                          +{interview.tags.length - 3}
                         </Badge>
                       )}
-                      {!interview.tags?.length && <span className="text-xs text-muted-foreground">No tags</span>}
                     </div>
+
                     {interview.experience && (
-                      <p className="text-sm text-muted-foreground line-clamp-3 hover:line-clamp-none transition-all">
+                      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
                         {interview.experience}
                       </p>
                     )}
                   </CardContent>
 
-                  <CardFooter className="px-6 py-4 mt-auto border-t bg-muted/10">
+                  <CardFooter className="px-6 py-4 mt-auto border-t border-muted/40 bg-muted/5">
                     <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center space-x-3 min-w-0">
-                        <Avatar className="h-8 w-8 shrink-0 ring-2 ring-background">
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-8 w-8 ring-2 ring-background ring-offset-2 ring-offset-background/50">
                           {interview.authorName === "Anonymous" ? (
-                            <AvatarFallback className="bg-primary/10 text-primary font-medium">
-                              <img src="/hacker.png" alt="Anonymous" className="h-8 w-8 rounded-full" />
+                            <AvatarFallback className="bg-primary/5 text-primary">
+                              <UserCircle2 className="h-5 w-5" />
                             </AvatarFallback>
                           ) : (
                             <>
                               <AvatarImage src={interview.authorAvatar} alt={interview.author?.name} />
-                              <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                              <AvatarFallback className="bg-primary/10 text-primary font-medium text-xs">
                                 {interview.author?.initials || interview.authorName?.charAt(0) || "?"}
                               </AvatarFallback>
                             </>
                           )}
                         </Avatar>
 
-                        <div className="space-y-1 min-w-0">
-                          <p className="text-sm font-medium leading-none truncate">{interview.authorName || "Unknown Author"}</p>
-                          <div className="flex items-center text-xs text-muted-foreground">
-                            <Calendar className="mr-1 h-3 w-3 shrink-0" />
-                            <time dateTime={interview.createdAt} className="truncate">
-                              {new Date(interview.createdAt).toLocaleDateString(undefined, {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </time>
-                          </div>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-medium truncate max-w-[100px]">
+                            {interview.authorName || "Anonymous"}
+                          </span>
+                          <time dateTime={interview.createdAt} className="text-[10px] text-muted-foreground">
+                            {new Date(interview.createdAt).toLocaleDateString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </time>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4 text-muted-foreground shrink-0">
-                        <div className="flex items-center gap-1.5 group-hover:text-primary transition-colors">
-                          <ThumbsUp className="h-4 w-4" />
-                          <span className="text-xs font-medium">{interview.likes || 0}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium">
+                          <ThumbsUp className="h-3.5 w-3.5" />
+                          <span>{interview.likes || 0}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 group-hover:text-primary transition-colors">
-                          <MessageSquare className="h-4 w-4" />
-                          <span className="text-xs font-medium">{interview.comments || 0}</span>
+                        <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium">
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          <span>{interview.comments || 0}</span>
                         </div>
+                        <div className="w-px h-4 bg-border mx-1" />
+                        <ArrowRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                       </div>
                     </div>
                   </CardFooter>

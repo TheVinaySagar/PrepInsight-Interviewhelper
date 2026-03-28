@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import ReactQuill from "react-quill"
-import "react-quill/dist/quill.snow.css"
+import ReactQuill from "react-quill-new"
+import "react-quill-new/dist/quill.snow.css"
 
 interface RichTextEditorProps {
   value: string
@@ -14,7 +14,7 @@ interface RichTextEditorProps {
 const formats = [
   'header',
   'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet', 'blockquote', 'code-block',
+  'list', 'blockquote', 'code-block',
   'link', 'code'
 ]
 
